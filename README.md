@@ -5,7 +5,7 @@ App de finanzas personales compartidas para Nat y Ro.
 - **Stack:** HTML + CSS + JS vanilla, un solo archivo (`index.html`).
 - **Backend:** Supabase (tabla `casa_data`, fila `id = 'main'`, columnas `data jsonb` y `updated_at`).
 - **Sync:** polling REST cada 10 s contra `/rest/v1/casa_data`.
-- **Hosting:** GitHub Pages, desplegado por `.github/workflows/deploy-pages.yml` en cada push a `main`.
+- **Hosting:** GitHub Pages, sirviendo `main` / (root) directamente.
 
 ## Desarrollo
 
