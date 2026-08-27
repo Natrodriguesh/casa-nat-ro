@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casa Nat & Ro 🏡</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0C0C12; --surface: #13131E; --card: #1C1C2A; --border: #2A2A3C;
+    --nat: #B48EFF; --ro: #FF9EC8; --home: #6FD4B8;
+    --text: #EAE6F4; --muted: #7A748E; --danger: #FF6B6B; --success: #6FD4B8;
+  }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; min-height: 100vh; }
+  .container { max-width: 480px; margin: 0 auto; padding: 0 16px 80px; }
+
+  /* CARDS */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 14px; }
+  .surface { background: var(--surface); border-radius: 12px; padding: 14px; }
+
+  /* BUTTONS */
+  .btn { border-radius: 10px; padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; border: 1.5px solid; transition: opacity .15s; }
+  .btn:hover { opacity: .8; }
+  .btn-sm { padding: 6px 14px; font-size: 12px; }
+  .btn-full { width: 100%; }
+  .btn-solid { color: #0C0C12; }
+  .btn-outline { background: transparent; }
+
+  /* TABS */
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tab { flex: 1; padding: 9px 0; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: inherit; transition: all .2s; }
+  .tab.active { color: #0C0C12; }
+
+  /* MONTH PILLS */
+  .months { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; }
+  .month-pill { white-space: nowrap; padding: 6px 14px; border-radius: 99px; font-size: 12px; cursor: pointer; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: inherit; font-weight: 400; }
+  .month-pill.active { font-weight: 700; }
+
+  /* ROWS */
+  .row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .row:last-child { border-bottom: none; }
+  .row-label { font-size: 13px; }
+  .row-val { font-weight: 700; font-size: 14px; }
+
+  /* TAG */
+  .tag { font-size: 11px; padding: 3px 9px; border-radius: 99px; font-weight: 700; }
+
+  /* PROGRESS */
+  .progress-wrap { height: 8px; background: var(--surface); border-radius: 99px; overflow: hidden; margin: 8px 0; }
+  .progress-bar { height: 100%; border-radius: 99px; transition: width .4s; }
+
+  /* PIN SCREEN */
+  .pin-screen { max-width: 340px; margin: 60px auto; padding: 0 16px; }
+  .pin-avatar { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-size: 26px; }
+
+  /* INPUT */
+  .input-wrap { margin-bottom: 14px; }
+  .input-label { font-size: 12px; color: var(--muted); font-weight: 600; margin-bottom: 6px; display: block; }
+  input[type=text], input[type=password], input[type=number], input[type=date] {
+    width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 14px; color: var(--text); font-size: 14px; font-family: inherit; outline: none;
+  }
+
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: #000000CC; z-index: 100; display: flex; align-items: flex-end; justify-content: center; }
+  .modal { background: var(--surface); border-radius: 20px 20px 0 0; padding: 24px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
+
+  /* HEADER */
+  .header { padding: 28px 0 24px; }
+  .header-eyebrow { font-size: 11px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
+  .gradient-text { background: linear-gradient(135deg, var(--nat), var(--ro)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; font-size: 26px; }
+
+  /* ACCESS CARDS */
+  .access-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .access-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 20px 16px; cursor: pointer; text-align: left; font-family: inherit; transition: border-color .2s; }
+
+  /* NET BOX */
+  .net-box { padding: 12px 14px; border-radius: 10px; text-align: center; margin-top: 12px; }
+
+  /* ICON BTN */
+  .icon-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 16px; padding: 0 4px; }
+
+  /* SECTIONS */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* LIBRE BOX */
+  .libre-box { border-radius: 12px; padding: 14px 16px; border: 1px solid; }
+
+  /* PLAN ROW */
+  .plan-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
+
+  /* 2-col grid */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .hide { display: none !important; }
+  .err { color: var(--danger); font-size: 12px; margin-bottom: 10px; }
+  .muted { color: var(--muted); }
+  .empty { color: var(--muted); font-size: 13px; text-align: center; padding: 16px 0; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     DATA LAYER
+══════════════════════════════════════════════════════ -->
+<script>
+const SUPABASE_URL = 'https://rkfcuplcdnyifgltrvzr.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_JIQEeS4MVDDIgURFhThsfg_VDpVacRc';
+const RATIO = { nat: 1500/2700, ro: 1200/2700 };
+
+function uid() { return Math.random().toString(36).slice(2,9); }
+function euro(n) { return '€' + Number(n).toFixed(2); }
+function hashPin(p) { let h=0; for(let i=0;i<p.length;i++) h=(Math.imul(31,h)+p.charCodeAt(i))|0; return h.toString(); }
+function monthKey(d) { return d.slice(0,7); }
+function monthLabel(k) { const [y,m]=k.split('-'); return new Date(+y,+m-1).toLocaleString('es-ES',{month:'long',year:'numeric'}); }
+function thisMonth() { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; }
+
+function defaultData() {
+  return {
+    pins: { nat: null, ro: null },
+    expenses: [],
+    fixedHome: [
+      { id:'arriendo', label:'🏠 Arriendo', amount:1200 },
+      { id:'luz', label:'💡 Luz', amount:100 },
+      { id:'cable', label:'📡 Cable', amount:10 },
+      { id:'gas', label:'🔥 Gas', amount:70 },
+    ],
+    funds: [
+      { id:'viajes', label:'✈️ Viajes', color:'#FFB347', saved:0, goal:1000 },
+      { id:'ahorro', label:'💰 Ahorro', color:'#6FD4B8', saved:0, goal:3000 },
+      { id:'cositas', label:'🪴 Cositas casa', color:'#B48EFF', saved:0, goal:500 },
+    ],
+    fixedNat: [
+      { id:'fn1', label:'🏠 Arriendo (mi parte)', amount:666.67 },
+      { id:'fn2', label:'💡 Luz (mi parte)', amount:55.56 },
+      { id:'fn3', label:'📡 Cable (mi parte)', amount:5.56 },
+      { id:'fn4', label:'🔥 Gas (mi parte)', amount:38.89 },
+      { id:'fn5', label:'🤖 Claude', amount:20 },
+      { id:'fn6', label:'🎬 Netflix', amount:10 },
+      { id:'fn7', label:'🎵 Spotify', amount:5 },
+    ],
+    fixedRo: [],
+    incomes: {
+      nat: [
+        { id:'i6', label:'💼 BookaHospi (Sebastián)', amount:1500, month:'2026-09' },
+        { id:'i5', label:'🔧 Alejandro/Waitry', amount:300, month:'2026-09' },
+        { id:'i3', label:'💼 BookaHospi (Sebastián)', amount:1500, month:'2026-10' },
+        { id:'i4', label:'🔧 Alejandro/Waitry', amount:1100, month:'2026-10' },
+      ],
+      ro: [
+        { id:'r2', label:'💼 Trabajo', amount:1200, month:'2026-09' },
+        { id:'r3', label:'💼 Trabajo', amount:1200, month:'2026-10' },
+      ],
+    },
+    planned: { nat:[], ro:[] },
+    personalDebts: {
+      nat: [
+        { id:'pd1', label:'💳 Tarjeta de crédito', amount:600, color:'#FF6B6B' },
+        { id:'pd2', label:'📱 Nequi', amount:500, color:'#FF9EC8' },
+        { id:'pd3', label:'🎓 Icetex', amount:12000, color:'#B48EFF' },
+      ],
+      ro: [],
+    },
+    owedToMe: {
+      nat: [
+        { id:'om1', label:'Laura Jaramillo', amount:1200, color:'#FFB347' },
+        { id:'om2', label:'Rocío 🩷', amount:1300, color:'#FF9EC8' },
+      ],
+      ro: [],
+    },
+    debts: [
+      { id:'d1', from:'nat', to:'ro', amount:180, concept:'Servicios agosto', date:'2026-08-01', settled:false },
+      { id:'d2', from:'nat', to:'ro', amount:30, concept:'Claude agosto', date:'2026-08-01', settled:false },
+    ],
+  };
+}
+
+let DB = null;
+let saving = false;
+
+async function load() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/casa_data?id=eq.main`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    const rows = await res.json();
+    if (rows && rows.length > 0 && rows[0].data && Object.keys(rows[0].data).length > 0) {
+      DB = rows[0].data;
+    } else {
+      DB = defaultData();
+      await save();
+    }
+  } catch(e) {
+    console.error('Load error', e);
+    DB = defaultData();
+  }
+}
+
+async function save() {
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/casa_data?id=eq.main`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ data: DB, updated_at: new Date().toISOString() })
+    });
+  } catch(e) { console.error('Save error', e); }
+}
+
+// Session unlock state
+const unlocked = { nat: false, ro: false };
+let currentView = 'home'; // home | nat | ro
+let currentPerson = null;
+
+// Per-person state
+const state = {
+  nat: { month: thisMonth(), tab: 'resumen' },
+  ro:  { month: thisMonth(), tab: 'resumen' },
+  home: { tab: 'resumen' }
+};
+</script>
+
+<!-- ══════════════════════════════════════════════════════
+     HTML STRUCTURE
+══════════════════════════════════════════════════════ -->
+
+<!-- HOME VIEW -->
+<div id="view-home" class="section active">
+  <div class="container">
+    <div class="header">
+      <div class="header-eyebrow">Finanzas</div>
+      <div class="gradient-text">Nat &amp; Ro 🏡</div>
+    </div>
+
+    <!-- Access cards -->
+    <div class="access-grid">
+      <button class="access-card" onclick="enterSection('nat')">
+        <div style="font-size:28px;margin-bottom:10px">💜</div>
+        <div style="font-weight:700;color:var(--nat);font-size:16px">Nat</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Mi espacio privado</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:8px">🔒 PIN requerido</div>
+      </button>
+      <button class="access-card" onclick="enterSection('ro')">
+        <div style="font-size:28px;margin-bottom:10px">🩷</div>
+        <div style="font-weight:700;color:var(--ro);font-size:16px">Rocío</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Mi espacio privado</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:8px">🔒 PIN requerido</div>
+      </button>
+    </div>
+
+    <!-- Home tabs -->
+    <div class="tabs" id="home-tabs">
+      <button class="tab active" onclick="homeTab('resumen')" id="htab-resumen">Resumen</button>
+      <button class="tab" onclick="homeTab('gastos')" id="htab-gastos">Variables</button>
+      <button class="tab" onclick="homeTab('fijos')" id="htab-fijos">Fijos</button>
+      <button class="tab" onclick="homeTab('fondos')" id="htab-fondos">Fondos</button>
+      <button class="tab" onclick="homeTab('deudas')" id="htab-deudas">Deudas</button>
+    </div>
+
+    <!-- HOME RESUMEN -->
+    <div id="hpanel-resumen">
+      <div class="card" id="home-resumen-card"></div>
+      <button class="btn btn-solid btn-full" style="background:var(--home);border-color:var(--home)" onclick="openAddHomeExpense()">+ Gasto variable</button>
+    </div>
+
+    <!-- HOME GASTOS -->
+    <div id="hpanel-gastos" class="hide">
+      <div class="months" id="home-months"></div>
+      <div class="card" id="home-gastos-card"></div>
+    </div>
+
+    <!-- HOME FIJOS -->
+    <div id="hpanel-fijos" class="hide">
+      <div class="card" id="home-fijos-card"></div>
+    </div>
+
+    <!-- HOME FONDOS -->
+    <div id="hpanel-fondos" class="hide">
+      <div id="home-fondos-list"></div>
+      <button class="btn btn-outline btn-full" style="color:var(--home);border-color:var(--home)" onclick="addFund()">+ Nuevo fondo</button>
+    </div>
+
+    <!-- HOME DEUDAS -->
+    <div id="hpanel-deudas" class="hide">
+      <div class="card" id="home-deudas-card"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PIN VIEW -->
+<div id="view-pin" class="section">
+  <div class="pin-screen">
+    <div class="card">
+      <div style="text-align:center;margin-bottom:24px">
+        <div class="pin-avatar" id="pin-avatar"></div>
+        <h2 id="pin-name" style="font-size:20px"></h2>
+        <p id="pin-subtitle" style="font-size:13px;color:var(--muted);margin-top:6px"></p>
+      </div>
+      <div class="input-wrap">
+        <label class="input-label">PIN</label>
+        <input type="password" id="pin-input" placeholder="····" onkeydown="if(event.key==='Enter')submitPin()">
+      </div>
+      <div class="input-wrap hide" id="pin-confirm-wrap">
+        <label class="input-label">Confirmar PIN</label>
+        <input type="password" id="pin-confirm" placeholder="····">
+      </div>
+      <p class="err hide" id="pin-err"></p>
+      <button class="btn btn-solid btn-full" id="pin-btn" onclick="submitPin()">Entrar</button>
+      <br><br>
+      <button class="btn btn-outline btn-full" style="color:var(--muted);border-color:var(--border)" onclick="showView('home')">← Volver</button>
+    </div>
+  </div>
+</div>
+
+<!-- PERSONAL VIEW -->
+<div id="view-personal" class="section">
+  <div class="container">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:24px 0 16px">
+      <div>
+        <div class="header-eyebrow">Mi espacio</div>
+        <h2 id="personal-title" style="font-size:22px;margin-top:4px"></h2>
+      </div>
+      <button class="btn btn-outline btn-sm" id="personal-lock-btn" onclick="lockSection()">🔒 Cerrar</button>
+    </div>
+
+    <!-- Month selector -->
+    <div class="months" id="personal-months"></div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab" onclick="personalTab('resumen')" id="ptab-resumen">Resumen</button>
+      <button class="tab" onclick="personalTab('variables')" id="ptab-variables">Variables</button>
+      <button class="tab" onclick="personalTab('fijos')" id="ptab-fijos">Fijos</button>
+      <button class="tab" onclick="personalTab('deudas')" id="ptab-deudas">Deudas</button>
+    </div>
+
+    <!-- RESUMEN -->
+    <div id="ppanel-resumen">
+      <div class="card" id="personal-income-card"></div>
+      <div class="card" id="personal-balance-card"></div>
+    </div>
+
+    <!-- VARIABLES -->
+    <div id="ppanel-variables" class="hide">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div>
+            <div style="font-size:11px;color:var(--muted)">Gastos variables</div>
+            <div id="personal-var-total" style="font-size:22px;font-weight:700;margin-top:4px"></div>
+          </div>
+          <button class="btn btn-solid btn-sm" id="personal-add-var-btn" onclick="openAddPersonalExpense()">+ Agregar</button>
+        </div>
+        <div id="personal-var-list"></div>
+      </div>
+    </div>
+
+    <!-- FIJOS -->
+    <div id="ppanel-fijos" class="hide">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div>
+            <div style="font-size:11px;color:var(--muted)">Gastos fijos</div>
+            <div id="personal-fixed-total" style="font-size:22px;font-weight:700;margin-top:4px"></div>
+          </div>
+          <button class="btn btn-outline btn-sm" id="personal-add-fixed-btn" onclick="addPersonalFixed()">+ Agregar</button>
+        </div>
+        <div id="personal-fixed-list"></div>
+      </div>
+    </div>
+
+    <!-- DEUDAS -->
+    <div id="ppanel-deudas" class="hide">
+      <div id="personal-deudas-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD EXPENSE MODAL -->
+<div class="modal-overlay hide" id="modal-expense">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h3 id="modal-title" style="font-size:17px">+ Nuevo gasto</h3>
+      <button class="icon-btn" style="font-size:22px" onclick="closeModal()">×</button>
+    </div>
+    <div class="input-wrap">
+      <label class="input-label">Monto (€)</label>
+      <input type="number" id="exp-amount" placeholder="0.00">
+    </div>
+    <div class="input-wrap">
+      <label class="input-label">Categoría</label>
+      <div id="exp-cats" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+    </div>
+    <div class="input-wrap" style="margin-top:12px">
+      <label class="input-label">Nota</label>
+      <input type="text" id="exp-note" placeholder="opcional">
+    </div>
+    <div class="input-wrap">
+      <label class="input-label">Fecha</label>
+      <input type="date" id="exp-date">
+    </div>
+    <button class="btn btn-solid btn-full" id="exp-save-btn" onclick="saveExpense()">Guardar</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     LOGIC
+══════════════════════════════════════════════════════ -->
+<script>
+const HOME_CATS = ['🏠 Arriendo','💡 Luz','🔥 Gas','📡 Cable','🛒 Mercado','🔧 Hogar','🎉 Ocio','✈️ Viaje','🏥 Salud','📦 Otro'];
+const PERSONAL_CATS = ['👗 Ropa','🍽️ Restaurantes','☕ Café','💄 Belleza','📱 Suscripciones','🚌 Transporte','💊 Farmacia','📚 Educación','🎁 Regalos','💰 Ahorro','📦 Otro'];
+
+let modalTarget = null; // 'home' | 'nat' | 'ro'
+let selectedCat = null;
+
+// ── VIEWS ──────────────────────────────────────────────
+function showView(v) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+}
+
+function enterSection(person) {
+  currentPerson = person;
+  const color = person === 'nat' ? 'var(--nat)' : 'var(--ro)';
+  const name = person === 'nat' ? 'Nat' : 'Rocío';
+  const emoji = person === 'nat' ? '💜' : '🩷';
+  const stored = DB.pins[person];
+
+  document.getElementById('pin-avatar').style.background = (person==='nat'?'#B48EFF':'#FF9EC8') + '22';
+  document.getElementById('pin-avatar').textContent = emoji;
+  document.getElementById('pin-name').style.color = color;
+  document.getElementById('pin-name').textContent = name;
+  document.getElementById('pin-input').value = '';
+  document.getElementById('pin-confirm').value = '';
+  document.getElementById('pin-err').classList.add('hide');
+
+  if (!stored) {
+    document.getElementById('pin-subtitle').textContent = 'Crea tu PIN';
+    document.getElementById('pin-confirm-wrap').classList.remove('hide');
+    document.getElementById('pin-btn').textContent = 'Crear PIN';
+  } else {
+    document.getElementById('pin-subtitle').textContent = 'Ingresa tu PIN';
+    document.getElementById('pin-confirm-wrap').classList.add('hide');
+    document.getElementById('pin-btn').textContent = 'Entrar';
+  }
+  document.getElementById('pin-btn').style.background = person==='nat'?'var(--nat)':'var(--ro)';
+  document.getElementById('pin-btn').style.borderColor = person==='nat'?'var(--nat)':'var(--ro)';
+  showView('pin');
+  setTimeout(() => document.getElementById('pin-input').focus(), 100);
+}
+
+async function submitPin() {
+  const p = document.getElementById('pin-input').value;
+  const stored = DB.pins[currentPerson];
+  const err = document.getElementById('pin-err');
+  err.classList.add('hide');
+
+  if (!stored) {
+    if (p.length < 4) { err.textContent='PIN mínimo 4 dígitos'; err.classList.remove('hide'); return; }
+    const c = document.getElementById('pin-confirm').value;
+    if (p !== c) { err.textContent='Los PINs no coinciden'; err.classList.remove('hide'); return; }
+    DB.pins[currentPerson] = hashPin(p);
+    await save();
+  } else {
+    if (hashPin(p) !== stored) { err.textContent='PIN incorrecto'; err.classList.remove('hide'); document.getElementById('pin-input').value=''; return; }
+  }
+  unlocked[currentPerson] = true;
+  openPersonalView(currentPerson);
+}
+
+function openPersonalView(person) {
+  const color = person==='nat'?'var(--nat)':'var(--ro)';
+  const name = person==='nat'?'Nat':'Rocío';
+  const emoji = person==='nat'?'💜':'🩷';
+  document.getElementById('personal-title').textContent = name + ' ' + emoji;
+  document.getElementById('personal-title').style.color = color;
+  document.getElementById('personal-lock-btn').style.borderColor = color;
+  document.getElementById('personal-lock-btn').style.color = color;
+  document.getElementById('personal-add-var-btn').style.background = color;
+  document.getElementById('personal-add-var-btn').style.borderColor = color;
+  document.getElementById('personal-add-fixed-btn').style.color = color;
+  document.getElementById('personal-add-fixed-btn').style.borderColor = color;
+  currentView = person;
+  renderPersonal(person);
+  personalTab('resumen');
+  showView('personal');
+}
+
+function lockSection() {
+  unlocked[currentPerson] = false;
+  showView('home');
+  renderHome();
+}
+
+// ── HOME TABS ──────────────────────────────────────────
+function homeTab(tab) {
+  ['resumen','gastos','fijos','fondos','deudas'].forEach(t => {
+    document.getElementById('hpanel-' + t).classList.toggle('hide', t !== tab);
+    document.getElementById('htab-' + t).classList.toggle('active', t === tab);
+    document.getElementById('htab-' + t).style.background = t===tab ? 'var(--home)' : 'var(--card)';
+    document.getElementById('htab-' + t).style.color = t===tab ? '#0C0C12' : 'var(--muted)';
+    document.getElementById('htab-' + t).style.borderColor = t===tab ? 'var(--home)' : 'var(--border)';
+  });
+  state.home.tab = tab;
+  if (tab==='gastos') renderHomeGastos();
+  if (tab==='fijos') renderHomeFijos();
+  if (tab==='fondos') renderHomeFondos();
+  if (tab==='deudas') renderHomeDeudas();
+}
+
+// ── PERSONAL TABS ──────────────────────────────────────
+function personalTab(tab) {
+  ['resumen','variables','fijos','deudas'].forEach(t => {
+    document.getElementById('ppanel-' + t).classList.toggle('hide', t !== tab);
+    const el = document.getElementById('ptab-' + t);
+    const color = currentPerson==='nat'?'var(--nat)':'var(--ro)';
+    el.classList.toggle('active', t === tab);
+    el.style.background = t===tab ? (currentPerson==='nat'?'var(--nat)':'var(--ro)') : 'var(--card)';
+    el.style.color = t===tab ? '#0C0C12' : 'var(--muted)';
+    el.style.borderColor = t===tab ? color : 'var(--border)';
+  });
+  state[currentPerson].tab = tab;
+  renderPersonal(currentPerson);
+}
+
+// ── RENDER HOME ─────────────────────────────────────────
+function renderHome() {
+  renderHomeResumen();
+  homeTab(state.home.tab);
+}
+
+function renderHomeResumen() {
+  const fixed = DB.fixedHome.reduce((a,f)=>a+f.amount,0);
+  const month = thisMonth();
+  const varExp = DB.expenses.filter(e=>e.person==='home' && monthKey(e.date)===month).reduce((a,e)=>a+e.amount,0);
+  const total = fixed + varExp;
+  const natShare = total * RATIO.nat;
+  const roShare = total * RATIO.ro;
+
+  document.getElementById('home-resumen-card').innerHTML = `
+    <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:14px">🏡 Este mes · ${monthLabel(month)}</div>
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="surface"><div style="font-size:11px;color:var(--muted)">Total hogar</div><div style="font-size:20px;font-weight:700;color:var(--home);margin-top:4px">${euro(total)}</div></div>
+      <div class="surface"><div style="font-size:11px;color:var(--muted)">Variables</div><div style="font-size:20px;font-weight:700;margin-top:4px">${euro(varExp)}</div></div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Reparto proporcional</div>
+    <div class="row"><div style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:50%;background:var(--nat);display:inline-block"></span><span style="font-size:13px">Nat 💜</span><span class="tag" style="background:#B48EFF22;color:var(--nat)">55.6%</span></div><span style="font-weight:700;color:var(--nat)">${euro(natShare)}</span></div>
+    <div class="row"><div style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:50%;background:var(--ro);display:inline-block"></span><span style="font-size:13px">Ro 🩷</span><span class="tag" style="background:#FF9EC822;color:var(--ro)">44.4%</span></div><span style="font-weight:700;color:var(--ro)">${euro(roShare)}</span></div>
+    <div class="progress-wrap" style="margin-top:12px"><div class="progress-bar" style="width:55.6%;background:var(--nat)"></div></div>
+  `;
+}
+
+function renderHomeGastos() {
+  const homeExp = DB.expenses.filter(e=>e.person==='home');
+  const months = [...new Set(homeExp.map(e=>monthKey(e.date)))].sort().reverse();
+  if (!months.includes(thisMonth())) months.unshift(thisMonth());
+  if (!state.home.month) state.home.month = months[0];
+
+  const mEl = document.getElementById('home-months');
+  mEl.innerHTML = months.map(m=>`<button class="month-pill ${m===state.home.month?'active':''}" style="${m===state.home.month?'background:var(--home)33;color:var(--home);border-color:var(--home)':''}" onclick="selectHomeMonth('${m}')">${monthLabel(m)}</button>`).join('');
+
+  const monthExp = homeExp.filter(e=>monthKey(e.date)===state.home.month);
+  const total = monthExp.reduce((a,e)=>a+e.amount,0);
+  document.getElementById('home-gastos-card').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div><div style="font-size:11px;color:var(--muted)">Total variables</div><div style="font-size:20px;font-weight:700;color:var(--home);margin-top:4px">${euro(total)}</div></div>
+      <button class="btn btn-solid btn-sm" style="background:var(--home);border-color:var(--home)" onclick="openAddHomeExpense()">+ Agregar</button>
+    </div>
+    ${renderExpenseList(monthExp,'var(--home)','home')}
+  `;
+}
+
+function selectHomeMonth(m) { state.home.month = m; renderHomeGastos(); }
+
+function renderHomeFijos() {
+  const fixed = DB.fixedHome;
+  const total = fixed.reduce((a,f)=>a+f.amount,0);
+  document.getElementById('home-fijos-card').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div><div style="font-size:11px;color:var(--muted)">Total fijos del hogar</div><div style="font-size:20px;font-weight:700;color:var(--home);margin-top:4px">${euro(total)}</div></div>
+      <button class="btn btn-outline btn-sm" style="color:var(--home);border-color:var(--home)" onclick="addHomeFixed()">+ Agregar</button>
+    </div>
+    ${fixed.map(f=>`
+      <div class="row">
+        <span class="row-label">${f.label}</span>
+        <div style="display:flex;gap:10px;align-items:center">
+          <div style="text-align:right">
+            <span style="font-weight:700;color:var(--home);font-size:14px">${euro(f.amount)}</span>
+            <div style="font-size:10px;color:var(--muted)">Nat ${euro(f.amount*RATIO.nat)} · Ro ${euro(f.amount*RATIO.ro)}</div>
+          </div>
+          <button class="icon-btn" onclick="editHomeFixed('${f.id}')">✏️</button>
+          <button class="icon-btn" onclick="deleteHomeFixed('${f.id}')">×</button>
+        </div>
+      </div>`).join('')}
+  `;
+}
+
+function renderHomeFondos() {
+  document.getElementById('home-fondos-list').innerHTML = DB.funds.map(f=>{
+    const pct = Math.min(100,(f.saved/f.goal)*100);
+    return `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+        <div><div style="font-size:16px;font-weight:700;color:${f.color}">${f.label}</div><div style="font-size:11px;color:var(--muted)">Meta: ${euro(f.goal)}</div></div>
+        <div style="text-align:right"><div style="font-size:20px;font-weight:700;color:${f.color}">${euro(f.saved)}</div><div style="font-size:10px;color:var(--muted)">${pct.toFixed(0)}%</div></div>
+      </div>
+      <div class="progress-wrap"><div class="progress-bar" style="width:${pct}%;background:${f.color}"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:12px">
+        <span>Nat: ${euro(f.saved*RATIO.nat)}</span><span>Ro: ${euro(f.saved*RATIO.ro)}</span>
+      </div>
+      <div style="display:flex;gap:8px">
+        ${[10,20,50,100].map(a=>`<button onclick="addToFund('${f.id}',${a})" style="flex:1;padding:6px 0;border-radius:8px;font-size:12px;font-weight:600;background:${f.color}22;border:1px solid ${f.color}44;color:${f.color};cursor:pointer;font-family:inherit">+${a}</button>`).join('')}
+        <button onclick="addToFundCustom('${f.id}')" style="flex:1;padding:6px 0;border-radius:8px;font-size:12px;font-weight:600;background:var(--card);border:1px solid var(--border);color:var(--muted);cursor:pointer;font-family:inherit">otro</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderHomeDeudas() {
+  const pending = DB.debts.filter(d=>!d.settled);
+  const settled = DB.debts.filter(d=>d.settled);
+  const natOwes = pending.filter(d=>d.from==='nat'&&d.to==='ro').reduce((a,d)=>a+d.amount,0);
+  const roOwes = pending.filter(d=>d.from==='ro'&&d.to==='nat').reduce((a,d)=>a+d.amount,0);
+  const net = natOwes - roOwes;
+
+  const fn = p => p==='nat'?'Nat 💜':'Rocío 🩷';
+  const fc = p => p==='nat'?'var(--nat)':'var(--ro)';
+
+  document.getElementById('home-deudas-card').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div>
+        <div style="font-weight:700;font-size:15px">💸 Deudas entre las dos</div>
+        ${net!==0?`<div style="font-size:12px;color:${net>0?'var(--nat)':'var(--ro)'};margin-top:4px">${net>0?'Nat le debe a Ro':'Ro le debe a Nat'} ${euro(Math.abs(net))}</div>`:'<div style="font-size:12px;color:var(--success);margin-top:4px">¡Al día! ✨</div>'}
+      </div>
+      <button class="btn btn-outline btn-sm" style="color:var(--home);border-color:var(--home)" onclick="addSharedDebt()">+ Añadir</button>
+    </div>
+    ${pending.length===0?'<div class="empty">Sin deudas pendientes</div>':''}
+    ${pending.map(d=>`
+      <div class="row">
+        <div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+            <span style="font-size:12px;font-weight:700;color:${fc(d.from)}">${fn(d.from)}</span>
+            <span style="font-size:11px;color:var(--muted)">→</span>
+            <span style="font-size:12px;font-weight:700;color:${fc(d.to)}">${fn(d.to)}</span>
+          </div>
+          <div style="font-size:12px">${d.concept}</div>
+          <div style="font-size:10px;color:var(--muted)">${d.date}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-left:12px">
+          <span style="font-weight:700;font-size:15px;color:${fc(d.from)}">${euro(d.amount)}</span>
+          <button onclick="settleDebt('${d.id}')" style="background:var(--success)22;border:1px solid var(--success)44;color:var(--success);border-radius:8px;padding:4px 8px;cursor:pointer;font-size:11px;font-weight:600;font-family:inherit">✓</button>
+          <button class="icon-btn" onclick="removeDebt('${d.id}')">×</button>
+        </div>
+      </div>`).join('')}
+    ${settled.length>0?`
+      <div style="margin-top:14px;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Saldadas</div>
+      ${settled.map(d=>`<div class="row" style="opacity:.5"><div><div style="font-size:12px;text-decoration:line-through">${d.concept}</div><div style="font-size:10px;color:var(--muted)">${fn(d.from)} → ${fn(d.to)}</div></div><div style="display:flex;align-items:center;gap:8px"><span style="font-size:13px;color:var(--muted);text-decoration:line-through">${euro(d.amount)}</span><button class="icon-btn" onclick="removeDebt('${d.id}')">×</button></div></div>`).join('')}
+    `:''}
+  `;
+}
+
+// ── RENDER PERSONAL ─────────────────────────────────────
+function renderPersonal(person) {
+  const color = person==='nat'?'var(--nat)':'var(--ro)';
+  const fixedKey = person==='nat'?'fixedNat':'fixedRo';
+  const fixed = DB[fixedKey] || [];
+  const totalFixed = fixed.reduce((a,f)=>a+f.amount,0);
+  const allIncomes = (DB.incomes||{})[person]||[];
+  const selMonth = state[person].month;
+  const myIncomes = allIncomes.filter(i=>i.month===selMonth);
+  const totalIncome = myIncomes.reduce((a,i)=>a+i.amount,0);
+  const myExp = DB.expenses.filter(e=>e.person===person);
+  const incomeMons = allIncomes.map(i=>i.month).filter(Boolean);
+  const allMonths = [...new Set([...incomeMons,...myExp.map(e=>monthKey(e.date))])].sort().reverse();
+  if (!allMonths.length) allMonths.push(thisMonth());
+  const monthExp = myExp.filter(e=>monthKey(e.date)===selMonth);
+  const totalVar = monthExp.reduce((a,e)=>a+e.amount,0);
+  const balance = totalIncome - totalFixed - totalVar;
+  const planned = ((DB.planned||{})[person]||[]).filter(p=>p.month===selMonth);
+  const totalPlanned = planned.reduce((a,p)=>a+p.amount,0);
+  const libre = balance - totalPlanned;
+
+  // Month pills
+  document.getElementById('personal-months').innerHTML = allMonths.map(m=>
+    `<button class="month-pill ${m===selMonth?'active':''}" style="${m===selMonth?`background:${person==='nat'?'#B48EFF':'#FF9EC8'}33;color:${person==='nat'?'var(--nat)':'var(--ro)'};border-color:${person==='nat'?'var(--nat)':'var(--ro)'}`:''}" onclick="selectPersonalMonth('${m}')">${monthLabel(m)}</button>`
+  ).join('');
+
+  // Income card
+  document.getElementById('personal-income-card').innerHTML = `
+    <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:12px">💰 Ingresos · ${monthLabel(selMonth)}</div>
+    ${myIncomes.length===0?'<div class="empty">Sin ingresos este mes</div>':''}
+    ${myIncomes.map(i=>`<div class="row"><div><div style="font-size:13px">${i.label}</div>${i.note?`<div style="font-size:10px;color:var(--muted)">${i.note}</div>`:''}</div><span style="font-weight:700;color:${color};font-size:15px">${euro(i.amount)}</span></div>`).join('')}
+    <div style="display:flex;justify-content:space-between;padding-top:10px"><span style="font-weight:700">Total</span><span style="font-weight:700;font-size:18px;color:${color}">${euro(totalIncome)}</span></div>
+  `;
+
+  // Balance + planner card
+  document.getElementById('personal-balance-card').innerHTML = `
+    <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:12px">📊 Balance · ${monthLabel(selMonth)}</div>
+    <div class="row"><span style="font-size:13px;color:var(--muted)">Ingresos</span><span style="font-weight:600;color:${color}">+${euro(totalIncome)}</span></div>
+    <div class="row"><span style="font-size:13px;color:var(--muted)">Gastos fijos</span><span style="font-weight:600;color:var(--danger)">-${euro(totalFixed)}</span></div>
+    <div class="row"><span style="font-size:13px;color:var(--muted)">Gastos variables</span><span style="font-weight:600;color:var(--danger)">-${euro(totalVar)}</span></div>
+    <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><span style="font-weight:600">Libre antes de planear</span><span style="font-weight:700;font-size:16px;color:${balance>=0?'var(--success)':'var(--danger)'}">${euro(balance)}</span></div>
+    <div style="margin-top:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <span style="font-size:12px;color:var(--muted);font-weight:600">🗓️ Planeado</span>
+        <button onclick="addPlanned()" style="background:${person==='nat'?'#B48EFF':'#FF9EC8'}22;border:1px solid ${person==='nat'?'#B48EFF':'#FF9EC8'}44;color:${color};border-radius:8px;padding:4px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">+ Añadir</button>
+      </div>
+      ${planned.length===0?'<div style="color:var(--muted);font-size:12px;font-style:italic">Añade en qué planeas gastar tu dinero libre</div>':''}
+      ${planned.map(p=>`<div class="plan-row"><span style="font-size:13px">${p.label}</span><div style="display:flex;gap:8px;align-items:center"><span style="font-weight:600;color:var(--danger);font-size:14px">-${euro(p.amount)}</span><button class="icon-btn" onclick="removePlanned('${p.id}')">×</button></div></div>`).join('')}
+      <div class="libre-box" style="margin-top:12px;background:${libre>=0?'var(--success)':'var(--danger)'}15;border-color:${libre>=0?'var(--success)':'var(--danger)'}33">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-weight:700">💚 Libre real</span>
+          <span style="font-weight:800;font-size:22px;color:${libre>=0?'var(--success)':'var(--danger)'}">${euro(libre)}</span>
+        </div>
+        ${planned.length>0?`<div class="progress-wrap" style="margin-top:8px"><div class="progress-bar" style="width:${Math.min(100,(totalPlanned/Math.max(totalIncome,1))*100)}%;background:${color}"></div></div>`:''}
+      </div>
+    </div>
+  `;
+
+  // Variables
+  document.getElementById('personal-var-total').textContent = euro(totalVar);
+  document.getElementById('personal-var-total').style.color = color;
+  document.getElementById('personal-var-list').innerHTML = renderExpenseList(monthExp, color, person);
+
+  // Fixed
+  document.getElementById('personal-fixed-total').textContent = euro(totalFixed);
+  document.getElementById('personal-fixed-total').style.color = color;
+  document.getElementById('personal-fixed-list').innerHTML = fixed.length===0?'<div class="empty">Sin gastos fijos</div>':
+    fixed.map(f=>`<div class="row"><span class="row-label">${f.label}</span><div style="display:flex;gap:10px;align-items:center"><span style="font-weight:700;color:${color}">${euro(f.amount)}</span><button class="icon-btn" onclick="deletePersonalFixed('${f.id}')">×</button></div></div>`).join('');
+
+  // Deudas
+  const myDebts = (DB.personalDebts||{})[person]||[];
+  const myOwed = (DB.owedToMe||{})[person]||[];
+  const totalDebt = myDebts.reduce((a,d)=>a+d.amount,0);
+  const totalOwed = myOwed.reduce((a,d)=>a+d.amount,0);
+  const net = totalOwed - totalDebt;
+  document.getElementById('personal-deudas-content').innerHTML = `
+    <div class="card" style="margin-bottom:14px">
+      <div class="grid2">
+        <div class="surface" style="text-align:center"><div style="font-size:11px;color:var(--muted)">Me deben</div><div style="font-size:20px;font-weight:700;color:var(--success);margin-top:4px">${euro(totalOwed)}</div></div>
+        <div class="surface" style="text-align:center"><div style="font-size:11px;color:var(--muted)">Debo</div><div style="font-size:20px;font-weight:700;color:var(--danger);margin-top:4px">${euro(totalDebt)}</div></div>
+      </div>
+      <div class="net-box" style="background:${net>=0?'var(--success)':'var(--danger)'}15;border:1px solid ${net>=0?'var(--success)':'var(--danger)'}33">
+        <div style="font-size:12px;color:var(--muted)">Balance neto</div>
+        <div style="font-weight:800;font-size:18px;color:${net>=0?'var(--success)':'var(--danger)'}">
+          ${net>=0?'+':''}${euro(net)}
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <span style="font-weight:600;font-size:14px;color:var(--success)">💚 Me deben</span>
+        <button class="btn btn-outline btn-sm" style="color:var(--success);border-color:var(--success)" onclick="addOwedToMe()">+ Añadir</button>
+      </div>
+      ${myOwed.length===0?'<div class="empty">Nadie te debe</div>':''}
+      ${myOwed.map(d=>`<div class="row"><span style="font-size:13px;font-weight:600">${d.label}</span><div style="display:flex;gap:8px;align-items:center"><span style="font-weight:700;color:${d.color||'var(--success)'};font-size:15px">${euro(d.amount)}</span><button class="icon-btn" onclick="removeOwedToMe('${d.id}')">×</button></div></div>`).join('')}
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <span style="font-weight:600;font-size:14px;color:var(--danger)">🔴 Yo debo</span>
+        <button class="btn btn-outline btn-sm" style="color:var(--danger);border-color:var(--danger)" onclick="addPersonalDebt()">+ Añadir</button>
+      </div>
+      ${myDebts.length===0?'<div class="empty">Sin deudas 🎉</div>':''}
+      ${myDebts.map(d=>{const pct=Math.min(100,(d.amount/Math.max(totalDebt,1))*100);return`<div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:13px;font-weight:600">${d.label}</span><div style="display:flex;gap:8px;align-items:center"><span style="font-weight:700;color:${d.color||'var(--danger)'}">${euro(d.amount)}</span><button class="icon-btn" onclick="removePersonalDebt('${d.id}')">×</button></div></div><div class="progress-wrap"><div class="progress-bar" style="width:${pct}%;background:${d.color||'var(--danger)'}"></div></div></div>`;}).join('')}
+    </div>
+  `;
+}
+
+function renderExpenseList(exps, color, person) {
+  if (!exps.length) return '<div class="empty">Sin gastos aún ✨</div>';
+  return exps.sort((a,b)=>b.date.localeCompare(a.date)).map(e=>`
+    <div class="row">
+      <div><div style="font-size:13px;font-weight:600">${e.cat}</div>${e.note?`<div style="font-size:11px;color:var(--muted)">${e.note}</div>`:''}<div style="font-size:11px;color:var(--muted)">${e.date}</div></div>
+      <div style="display:flex;align-items:center;gap:10px"><span style="font-weight:700;color:${color};font-size:15px">${euro(e.amount)}</span><button class="icon-btn" onclick="deleteExpense('${e.id}')">×</button></div>
+    </div>`).join('');
+}
+
+function selectPersonalMonth(m) { state[currentPerson].month = m; renderPersonal(currentPerson); }
+
+// ── EXPENSE MODAL ───────────────────────────────────────
+function openAddHomeExpense() {
+  modalTarget = 'home';
+  openExpenseModal('var(--home)', HOME_CATS);
+}
+function openAddPersonalExpense() {
+  modalTarget = currentPerson;
+  const color = currentPerson==='nat'?'var(--nat)':'var(--ro)';
+  openExpenseModal(color, PERSONAL_CATS);
+}
+function openExpenseModal(color, cats) {
+  selectedCat = cats[0];
+  document.getElementById('exp-save-btn').style.background = color;
+  document.getElementById('exp-save-btn').style.borderColor = color;
+  document.getElementById('exp-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('exp-amount').value = '';
+  document.getElementById('exp-note').value = '';
+  document.getElementById('exp-cats').innerHTML = cats.map(c=>
+    `<button class="cat-btn" onclick="selectCat(this,'${c}','${color}')" style="padding:6px 12px;border-radius:99px;font-size:12px;cursor:pointer;font-family:inherit;background:${c===selectedCat?color+'33':'var(--card)'};border:1.5px solid ${c===selectedCat?color:'var(--border)'};color:${c===selectedCat?color:'var(--muted)'};font-weight:${c===selectedCat?700:400}">${c}</button>`
+  ).join('');
+  document.getElementById('modal-expense').classList.remove('hide');
+  setTimeout(()=>document.getElementById('exp-amount').focus(),100);
+}
+function selectCat(btn, cat, color) {
+  selectedCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(b=>{
+    b.style.background='var(--card)'; b.style.borderColor='var(--border)'; b.style.color='var(--muted)'; b.style.fontWeight=400;
+  });
+  btn.style.background=color+'33'; btn.style.borderColor=color; btn.style.color=color; btn.style.fontWeight=700;
+}
+function closeModal() { document.getElementById('modal-expense').classList.add('hide'); }
+async function saveExpense() {
+  const amount = parseFloat(document.getElementById('exp-amount').value);
+  if (!amount || isNaN(amount)) return;
+  const note = document.getElementById('exp-note').value;
+  const date = document.getElementById('exp-date').value;
+  const exp = { id: uid(), person: modalTarget, amount, cat: selectedCat, note, date, receipt: null };
+  DB.expenses.push(exp);
+  await save();
+  closeModal();
+  if (modalTarget==='home') { renderHomeResumen(); renderHomeGastos(); }
+  else renderPersonal(currentPerson);
+}
+async function deleteExpense(id) {
+  DB.expenses = DB.expenses.filter(e=>e.id!==id);
+  save();
+  if (currentView==='home') { renderHomeResumen(); renderHomeGastos(); }
+  else renderPersonal(currentPerson);
+}
+
+// ── HOME FIXED ──────────────────────────────────────────
+async function addHomeFixed() {
+  const label = prompt('Nombre del gasto fijo:'); if (!label) return;
+  const amount = parseFloat(prompt('Monto (€):')); if (!amount||isNaN(amount)) return;
+  DB.fixedHome.push({ id:uid(), label, amount }); await save(); renderHomeFijos();
+}
+async function editHomeFixed(id) {
+  const f = DB.fixedHome.find(x=>x.id===id);
+  const amount = parseFloat(prompt(`Nuevo monto para ${f.label}:`, f.amount));
+  if (!amount||isNaN(amount)) return;
+  f.amount = amount; await await save(); renderHomeFijos(); renderHomeResumen();
+}
+async function deleteHomeFixed(id) { DB.fixedHome=DB.fixedHome.filter(x=>x.id!==id); await save(); renderHomeFijos(); }
+
+// ── PERSONAL FIXED ──────────────────────────────────────
+async function addPersonalFixed() {
+  const label = prompt('Nombre del gasto fijo:'); if (!label) return;
+  const amount = parseFloat(prompt('Monto (€):')); if (!amount||isNaN(amount)) return;
+  const key = currentPerson==='nat'?'fixedNat':'fixedRo';
+  DB[key].push({ id:uid(), label, amount }); await save(); renderPersonal(currentPerson);
+}
+async function deletePersonalFixed(id) {
+  const key = currentPerson==='nat'?'fixedNat':'fixedRo';
+  DB[key] = DB[key].filter(x=>x.id!==id); await save(); renderPersonal(currentPerson);
+}
+
+// ── FUNDS ───────────────────────────────────────────────
+async function addToFund(id, amt) {
+  const f = DB.funds.find(x=>x.id===id); if (!f) return;
+  f.saved += amt; await save(); renderHomeFondos();
+}
+function addToFundCustom(id) {
+  const amt = parseFloat(prompt('¿Cuánto añadir? (€)')); if (!amt||isNaN(amt)) return;
+  addToFund(id, amt);
+}
+async function addFund() {
+  const label = prompt('Nombre del fondo:'); if (!label) return;
+  const goal = parseFloat(prompt('Meta (€):')); if (!goal||isNaN(goal)) return;
+  const colors = ['#FFB347','#FF6B9D','#A8E6CF','#DDA0DD','#87CEEB'];
+  const color = colors[Math.floor(Math.random()*colors.length)];
+  DB.funds.push({ id:uid(), label, color, saved:0, goal }); await save(); renderHomeFondos();
+}
+
+// ── SHARED DEBTS ────────────────────────────────────────
+async function addSharedDebt() {
+  const from = prompt('¿Quién debe? (nat / ro)'); if (!['nat','ro'].includes(from)) return;
+  const to = from==='nat'?'ro':'nat';
+  const amount = parseFloat(prompt('¿Cuánto (€)?')); if (!amount||isNaN(amount)) return;
+  const concept = prompt('Concepto:'); if (!concept) return;
+  DB.debts.push({ id:uid(), from, to, amount, concept, date:new Date().toISOString().slice(0,10), settled:false });
+  await save(); renderHomeDeudas();
+}
+async function settleDebt(id) { const d=DB.debts.find(x=>x.id===id); if(d) d.settled=true; await save(); renderHomeDeudas(); }
+async function removeDebt(id) { DB.debts=DB.debts.filter(x=>x.id!==id); await save(); renderHomeDeudas(); }
+
+// ── PERSONAL DEBTS / OWED ───────────────────────────────
+async function addPersonalDebt() {
+  const label = prompt('¿A quién le debes?'); if (!label) return;
+  const amount = parseFloat(prompt('¿Cuánto (€)?')); if (!amount||isNaN(amount)) return;
+  const colors = ['#FF6B6B','#FFB347','#B48EFF','#FF9EC8'];
+  const color = colors[Math.floor(Math.random()*colors.length)];
+  if (!DB.personalDebts) DB.personalDebts={nat:[],ro:[]};
+  DB.personalDebts[currentPerson].push({ id:uid(), label, amount, color }); await save(); renderPersonal(currentPerson);
+}
+async function removePersonalDebt(id) { DB.personalDebts[currentPerson]=DB.personalDebts[currentPerson].filter(x=>x.id!==id); await save(); renderPersonal(currentPerson); }
+async function addOwedToMe() {
+  const label = prompt('¿Quién te debe?'); if (!label) return;
+  const amount = parseFloat(prompt('¿Cuánto (€)?')); if (!amount||isNaN(amount)) return;
+  const colors = ['#FFB347','#6FD4B8','#B48EFF','#87CEEB'];
+  const color = colors[Math.floor(Math.random()*colors.length)];
+  if (!DB.owedToMe) DB.owedToMe={nat:[],ro:[]};
+  DB.owedToMe[currentPerson].push({ id:uid(), label, amount, color }); await save(); renderPersonal(currentPerson);
+}
+async function removeOwedToMe(id) { DB.owedToMe[currentPerson]=DB.owedToMe[currentPerson].filter(x=>x.id!==id); await save(); renderPersonal(currentPerson); }
+
+// ── PLANNER ─────────────────────────────────────────────
+async function addPlanned() {
+  const label = prompt('¿En qué lo vas a gastar?'); if (!label) return;
+  const amount = parseFloat(prompt('¿Cuánto (€)?')); if (!amount||isNaN(amount)) return;
+  if (!DB.planned) DB.planned={nat:[],ro:[]};
+  DB.planned[currentPerson].push({ id:uid(), label, amount, month:state[currentPerson].month });
+  await save(); renderPersonal(currentPerson);
+}
+async function removePlanned(id) {
+  DB.planned[currentPerson]=DB.planned[currentPerson].filter(x=>x.id!==id);
+  await save(); renderPersonal(currentPerson);
+}
+
+// ── INIT ────────────────────────────────────────────────
+document.body.innerHTML += '<div id="loading-screen" style="position:fixed;inset:0;background:#0C0C12;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999"><div style="font-size:32px;margin-bottom:16px">🏡</div><div style="background:linear-gradient(135deg,#B48EFF,#FF9EC8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800;font-size:22px;margin-bottom:8px">Nat & Ro</div><div style="color:#7A748E;font-size:13px">Cargando...</div></div>';
+
+load().then(() => {
+  document.getElementById('loading-screen').remove();
+  renderHome();
+  homeTab('resumen');
+
+  // Poll for changes every 10 seconds
+  setInterval(async () => {
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/casa_data?id=eq.main`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+      });
+      const rows = await res.json();
+      if (rows && rows[0]) {
+        const remote = rows[0].updated_at;
+        if (remote !== lastSync) {
+          lastSync = remote;
+          DB = rows[0].data;
+          renderHome();
+          if (currentView === 'nat' || currentView === 'ro') renderPersonal(currentView);
+        }
+      }
+    } catch(e) {}
+  }, 10000);
+});
+
+let lastSync = null;
+</script>
+</body>
+</html>
